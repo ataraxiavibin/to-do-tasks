@@ -37,7 +37,9 @@ def show_tasks(tasks):
 
 
 def delete_task(tasks):
-    user_input = input("Enter the task to delete: ")
+    if tasks:
+        user_input = input("Enter the task to delete: ")
+
     if user_input.isdigit():
         task_num = int(user_input)
         if 0 < task_num <= len(tasks):
@@ -58,11 +60,13 @@ def delete_task(tasks):
 def add_task(tasks):
     task = input("Enter the task: ")
 
-    if task not in tasks:
+    if task in tasks:
+        print("This task is already on the list.")
+    elif task.isdigit():
+        print("Task can't be a number.")
+    else:
         tasks.append(task)
         save_tasks(tasks)
-    else:
-        print("This task is already on the list.")
 
 
 def main():
