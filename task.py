@@ -39,6 +39,8 @@ def show_tasks(tasks):
 def delete_task(tasks):
     if tasks:
         user_input = input("Enter the task to delete: ")
+    else: 
+        raise Exception("No tasks to delete.")
 
     if user_input.isdigit():
         task_num = int(user_input)
@@ -91,7 +93,10 @@ def main():
             case "1":
                 add_task(tasks)
             case "2":
-                delete_task(tasks)
+                try:
+                    delete_task(tasks)
+                except Exception as e:
+                    print(e)
             case "3":
                 show_tasks(tasks)
             case "0":
