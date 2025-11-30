@@ -57,8 +57,8 @@ def add_task(tasks):
 def main():
     try:
         with open("tasks.json", "r", encoding="utf-8") as file:
-            print("file found. restored.")
             tasks = json.load(file)
+            print("file found. restored.")
     except FileNotFoundError:
         print("dry run.")
         tasks = []
