@@ -14,6 +14,9 @@ def save_tasks(tasks):
         json.dump(tasks, file)
 
 def clear_tasks(tasks):
+    if not tasks:
+        raise Exception("No tasks to clear.")
+
     if input("Are you sure? Type 'clear' to confirm. ") == "clear":
         tasks.clear()
         save_tasks(tasks)
@@ -25,8 +28,8 @@ def show_tasks(tasks):
     if tasks:
         print("-" * 30)
 
-        for task in tasks:
-            print("- " + task)
+        for index, task in enumerate(tasks):
+            print(f"{index + 1} - " + task)
 
         print("-" * 30)
     else:
@@ -34,18 +37,26 @@ def show_tasks(tasks):
 
 
 def delete_task(tasks):
-    task = input("Enter the task to delete: ")
-
-    if task in tasks:
-        tasks.remove(task)
-        print(f"Task {task} removed successfully.")
-        save_tasks(tasks)
+    user_input = input("Enter the task to delete: ")
+    if user_input.isdigit():
+        task_num = int(user_input)
+        if 0 < task_num <= len(tasks):
+            removed = tasks.pop(task_num - 1)
+            save_tasks(tasks)
+            print(f"Task '{removed}' removed successfully.")
+        else:
+            print("Invalid number.")
     else:
-        print("There is no task to remove.")
+        if user_input in tasks:
+            tasks.remove(user_input)
+            save_tasks(tasks)
+            print(f"Task '{user_input}' removed successfully.")
+        else:
+            print("Invalid task.")
 
 
 def add_task(tasks):
-    task = input("Enter the task: ")   
+    task = input("Enter the task: ")
 
     if task not in tasks:
         tasks.append(task)
@@ -59,8 +70,8 @@ def main():
         with open("tasks.json", "r", encoding="utf-8") as file:
             tasks = json.load(file)
             print("file found. restored.")
-    except FileNotFoundError:
-        print("dry run.")
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("no tasks found, or the file is corrupted. fresh start.")
         tasks = []
 
     while True:
@@ -80,7 +91,10 @@ def main():
             case "3":
                 show_tasks(tasks)
             case "0":
-                clear_tasks(tasks)
+                try:
+                    clear_tasks(tasks)
+                except Exception as e:
+                    print(e)
             case "q":
                 return 0
             case _:
